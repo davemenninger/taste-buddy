@@ -1,3 +1,7 @@
+#  Taste Buddy
+
+Taste Buddy is a search tool for food trucks using San Francisco's open data.  Search by truck name, or by food!
+
 # Case Study:
 
 We strive to be a practical and pragmatic team here at Estee Lauder Companies. That extends to the way that we work with you to understand if this team is a great fit for you.  We want you to come away with a great understanding of the kind of things that we do day to day and what it is like to work in our teams.
