@@ -6,9 +6,9 @@ defmodule TasteBuddyWeb.Live do
       <div class="control_panel">
         <form phx-submit="truck_search">
           <%= # <button phx-click="load_data" >RE-LOAD</button> %>
-          <button phx-click="pick_truck" >RANDOM!</button>
+          <button type="button" phx-click="pick_random_truck" >RANDOM!</button>
           <button type="submit">Search:</button>
-          <input type="text" name="search_string" placeholder="search by name or food" />
+          <input type="text" name="search_string" placeholder="search by name or by food" />
         </form>
       </div>
 
@@ -25,7 +25,7 @@ defmodule TasteBuddyWeb.Live do
       |> assign(:pick, %{})
 
     send(self(), :load_data)
-    send(self(), :pick_truck)
+    send(self(), :pick_random_truck)
 
     {:ok, socket}
   end
@@ -39,7 +39,7 @@ defmodule TasteBuddyWeb.Live do
      )}
   end
 
-  def handle_info(:pick_truck, socket) do
+  def handle_info(:pick_random_truck, socket) do
     pick =
       case socket.assigns.food_trucks do
         [] -> "..."
@@ -57,22 +57,24 @@ defmodule TasteBuddyWeb.Live do
     {:noreply, socket}
   end
 
-  def handle_event("pick_truck", _, socket) do
-    send(self(), :pick_truck)
+  def handle_event("pick_random_truck", _, socket) do
+    send(self(), :pick_random_truck)
 
     {:noreply, socket}
   end
 
   def handle_event("truck_search", %{"search_string" => search_string}, socket) do
     pick =
-      Enum.filter(
-        socket.assigns.food_trucks,
-        fn %{"Applicant" => name, "FoodItems" => food} = truck ->
-          crude_search(truck, search_string) and
-            truck != socket.assigns.pick
-        end
-      )
-      |> Enum.random()
+      case Enum.filter(
+             socket.assigns.food_trucks,
+             fn %{"Applicant" => _name, "FoodItems" => _food} = truck ->
+               crude_search(truck, search_string) and
+                 truck != socket.assigns.pick
+             end
+           ) do
+        [] -> %{"Applicant" => "n/a", "FoodItems" => "no match"}
+        matches -> matches |> Enum.random()
+      end
 
     {:noreply,
      socket
