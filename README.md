@@ -2,6 +2,8 @@
 
 Taste Buddy is a search tool for food trucks using San Francisco's open data.  Search by truck name, or by food!
 
+This LiveView app loads a csv file of data, and provides a basic text-based search of the entries.
+
 ## Usage
 
 To start your Phoenix server:
