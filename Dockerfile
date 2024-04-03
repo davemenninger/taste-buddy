@@ -48,24 +48,19 @@ RUN mix deps.compile
 
 COPY priv priv
 
-# note: if your project uses a tool like https://purgecss.com/,
-# which customizes asset compilation based on what it finds in
-# your Elixir templates, you will need to move the asset compilation
-# step down so that `lib` is available.
+COPY lib lib
+
 COPY assets assets
 
 # compile assets
 RUN mix assets.deploy
 
 # Compile the release
-COPY lib lib
-
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
 
-COPY rel rel
 RUN mix release
 
 # start a new build stage so that the final image will only contain
@@ -73,7 +68,7 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -89,8 +84,10 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/my_app ./
+COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/taste_buddy ./
 
 USER nobody
 
-CMD /app/bin/server
+ENV SECRET_KEY_BASE=replaceme
+
+CMD ["/app/bin/server"]
