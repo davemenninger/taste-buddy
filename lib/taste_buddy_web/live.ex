@@ -1,6 +1,27 @@
 defmodule TasteBuddyWeb.Live do
   use Phoenix.LiveView
 
+  @doc """
+  NOTES:
+
+  Design choices:
+  * used LivewView to load the csv in the background and allow searching without a page reload.
+  * the LiveView Component can be reused if displaying all of the matching results, instead of choosing only one to
+  show.
+
+  Would have liked to add:
+  * stats/counts, like: "out of X entries, there are Y matches. here is a random one of those."
+  * show more of the data from the file, especially a map.
+  * better search (fuzzy matching?); bold/highlight the matching term.
+  * tests covering the load_data_from_csv and crude_search functions
+
+  Known not-working:
+  * the search term disappears from the search box, after hitting submit. i'd like it to stay, and maybe have a "give
+  me another option". button for the same search term.
+  * didn't get to extensively test the Dockerfile
+
+  """
+
   def render(assigns) do
     ~H"""
       <div class="control_panel">
